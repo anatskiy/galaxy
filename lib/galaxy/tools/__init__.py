@@ -68,6 +68,7 @@ from galaxy.tools.parser import (
 )
 from galaxy.tools.parser.xml import XmlPageSource
 from galaxy.tools.test import parse_tests
+from galaxy.tools.profile import parse_profiles
 from galaxy.tools.toolbox import BaseGalaxyToolBox
 from galaxy.util import (
     ExecutionTimer,
@@ -742,6 +743,13 @@ class Tool(Dictifiable):
             self.tool_action = getattr(mod, cls)()
         # Tests
         self.__parse_tests(tool_source)
+        # Profiles
+        self.__parse_profiles(tool_source)
+
+        if self.name == 'Cut':
+            print('\n!!! YES !!!\n')
+            print(self.profiles)
+            print('\n')
 
         # Requirements (dependencies)
         requirements, containers = tool_source.parse_requirements_and_containers()
@@ -791,6 +799,10 @@ class Tool(Dictifiable):
         self.__tests_source = tool_source
         self.__tests_populated = False
 
+    def __parse_profiles(self, tool_source):
+        self.__profiles_source = tool_source
+        self.__profiles_populated = False
+
     def __parse_config_files(self, tool_source):
         self.config_files = []
         if not hasattr(tool_source, 'root'):
@@ -836,6 +848,21 @@ class Tool(Dictifiable):
                 self.__tests = None
             self.__tests_populated = True
         return self.__tests
+
+    @property
+    def profiles(self):
+        if not self.__profiles_populated:
+            profiles_source = self.__profiles_source
+            if profiles_source:
+                try:
+                    self.__profiles = parse_profiles(self, profiles_source)
+                except Exception:
+                    self.__profiles = None
+                    log.exception("Failed to parse tool profiles")
+            else:
+                self.__profiles = None
+            self.__profiles_populated = True
+        return self.__profiles
 
     @property
     def _repository_dir(self):

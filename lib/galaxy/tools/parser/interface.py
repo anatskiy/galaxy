@@ -217,6 +217,9 @@ class ToolSource(object):
     def parse_tests_to_dict(self):
         return {'tests': []}
 
+    def parse_profiles_to_dict(self):
+        return {'profiles': []}
+
     def __str__(self):
         source_path = getattr(self, "_soure_path", None)
         if source_path:

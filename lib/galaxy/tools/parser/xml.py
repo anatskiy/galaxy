@@ -398,6 +398,19 @@ class XmlToolSource(ToolSource):
 
         return rval
 
+    def parse_profiles_to_dict(self):
+        profiles_elem = self.root.find("profiles")
+        profiles = []
+        rval = dict(
+            profiles=profiles
+        )
+
+        if profiles_elem is not None:
+            for i, profile_elem in enumerate(profiles_elem.findall("profile")):
+                profiles.append(_profile_elem_to_dict(profile_elem, i))
+
+        return rval
+
     def parse_profile(self):
         # Pre-16.04 or default XML defaults
         # - Use standard error for error detection.
@@ -422,6 +435,15 @@ def _test_elem_to_dict(test_elem, i):
         maxseconds=test_elem.get("maxseconds", None),
     )
     _copy_to_dict_if_present(test_elem, rval, ["num_outputs"])
+    return rval
+
+
+def _profile_elem_to_dict(profile_elem, i):
+    rval = dict(
+        name=profile_elem.get("name"),
+        description=profile_elem.get("description"),
+        inputs=__parse_input_elems(profile_elem, i),
+    )
     return rval
 
 

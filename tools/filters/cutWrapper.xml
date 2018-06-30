@@ -148,6 +148,19 @@
       <output name="out_file1" file="eq-cut.dat" />
     </test>
   </tests>
+
+  <!-- Temporary -->
+  <profiles>
+    <profile name="Profile 1" description="Tab">
+      <param name="columnList" value="c1,c4,c2,c3"/>
+      <param name="delimiter" value="T"/>
+    </profile>
+    <profile name="Profile 2" description="Comma">
+      <param name="columnList" value="c1,c4,c2-c3" />
+      <param name="delimiter" value="C" />
+    </profile>
+  </profiles>
+
   <help>
 
 .. class:: warningmark
